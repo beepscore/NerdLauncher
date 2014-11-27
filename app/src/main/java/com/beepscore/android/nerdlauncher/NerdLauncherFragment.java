@@ -4,15 +4,19 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -42,8 +46,15 @@ public class NerdLauncherFragment extends ListFragment {
 
         sortActivities(activities);
 
-        ArrayAdapter<ResolveInfo> adapter = getResolveInfoArrayAdapter(activities);
+        NerdLauncherAdapter adapter = new NerdLauncherAdapter(activities);
         setListAdapter(adapter);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent,
+                             Bundle savedInstanceState) {
+        // Fragments in inflate their view in onCreateView, not in onCreate
+        return inflater.inflate(R.layout.list_item_activity, parent, false);
     }
 
     @Override
@@ -73,23 +84,27 @@ public class NerdLauncherFragment extends ListFragment {
         });
     }
 
-    private ArrayAdapter<ResolveInfo> getResolveInfoArrayAdapter(final List<ResolveInfo> activities) {
+    private class NerdLauncherAdapter extends ArrayAdapter<ResolveInfo> {
 
-        ArrayAdapter<ResolveInfo> arrayAdapter = new ArrayAdapter<ResolveInfo>(
-                getActivity(), android.R.layout.simple_list_item_1, activities) {
+        public NerdLauncherAdapter(List<ResolveInfo> activities) {
+            super(getActivity(), 0, activities);
+        }
 
-            public View getView(int position, View convertView, ViewGroup parent) {
-                PackageManager packageManager = getActivity().getPackageManager();
-                View view = super.getView(position, convertView, parent);
-                // view is a View and also is a simple_list_item_1, a TextView.
-                // Cast to TextView in order to set text
-                TextView textView = (TextView)view;
-                ResolveInfo resolveInfo = getItem(position);
-                textView.setText(resolveInfo.loadLabel(packageManager));
-                return view;
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_activity, null);
             }
-        };
-        return arrayAdapter;
+
+            ImageView imageView = (ImageView)convertView.findViewById(android.R.id.icon);
+            TextView textView = (TextView)convertView.findViewById(R.id.list_item_app_text_view);
+
+            ResolveInfo resolveInfo = getItem(position);
+            PackageManager packageManager = getActivity().getPackageManager();
+
+            imageView.setImageDrawable(resolveInfo.loadIcon(packageManager));
+            textView.setText(resolveInfo.loadLabel(packageManager));
+            return convertView;
+        }
     }
 
 }
