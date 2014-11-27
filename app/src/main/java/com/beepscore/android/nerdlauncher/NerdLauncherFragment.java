@@ -58,6 +58,7 @@ public class NerdLauncherFragment extends ListFragment {
         // explicit intent
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setClassName(activityInfo.applicationInfo.packageName, activityInfo.name);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
