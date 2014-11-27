@@ -4,19 +4,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,7 +41,7 @@ public class NerdLauncherFragment extends ListFragment {
 
         sortActivities(activities);
 
-        NerdLauncherAdapter adapter = new NerdLauncherAdapter(activities);
+        NerdLauncherAdapter adapter = new NerdLauncherAdapter(getActivity(), activities);
         setListAdapter(adapter);
     }
 
@@ -82,29 +77,6 @@ public class NerdLauncherFragment extends ListFragment {
                         resolveInfoB.loadLabel(packageManager).toString());
             }
         });
-    }
-
-    private class NerdLauncherAdapter extends ArrayAdapter<ResolveInfo> {
-
-        public NerdLauncherAdapter(List<ResolveInfo> activities) {
-            super(getActivity(), 0, activities);
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_activity, null);
-            }
-
-            ImageView imageView = (ImageView)convertView.findViewById(android.R.id.icon);
-            TextView textView = (TextView)convertView.findViewById(R.id.list_item_app_text_view);
-
-            ResolveInfo resolveInfo = getItem(position);
-            PackageManager packageManager = getActivity().getPackageManager();
-
-            imageView.setImageDrawable(resolveInfo.loadIcon(packageManager));
-            textView.setText(resolveInfo.loadLabel(packageManager));
-            return convertView;
-        }
     }
 
 }
