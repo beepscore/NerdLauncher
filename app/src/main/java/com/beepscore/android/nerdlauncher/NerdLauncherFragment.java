@@ -41,21 +41,7 @@ public class NerdLauncherFragment extends ListFragment {
 
         sortActivities(activities);
 
-        ArrayAdapter<ResolveInfo> adapter = new ArrayAdapter<ResolveInfo>(
-                getActivity(), android.R.layout.simple_list_item_1, activities) {
-
-            public View getView(int position, View convertView, ViewGroup parent) {
-                PackageManager packageManager = getActivity().getPackageManager();
-                View view = super.getView(position, convertView, parent);
-                // view will be a simple_list_item_1, a TextView.
-                // Cast in order to set its text
-                TextView textView = (TextView)view;
-                ResolveInfo resolveInfo = getItem(position);
-                textView.setText(resolveInfo.loadLabel(packageManager));
-                return view;
-            }
-        };
-
+        ArrayAdapter<ResolveInfo> adapter = getResolveInfoArrayAdapter(activities);
         setListAdapter(adapter);
     }
 
@@ -68,6 +54,25 @@ public class NerdLauncherFragment extends ListFragment {
                         resolveInfoB.loadLabel(packageManager).toString());
             }
         });
+    }
+
+    private ArrayAdapter<ResolveInfo> getResolveInfoArrayAdapter(final List<ResolveInfo> activities) {
+
+        ArrayAdapter<ResolveInfo> arrayAdapter = new ArrayAdapter<ResolveInfo>(
+                getActivity(), android.R.layout.simple_list_item_1, activities) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                PackageManager packageManager = getActivity().getPackageManager();
+                View view = super.getView(position, convertView, parent);
+                // view is a View and also is a simple_list_item_1, a TextView.
+                // Cast to TextView in order to set text
+                TextView textView = (TextView)view;
+                ResolveInfo resolveInfo = getItem(position);
+                textView.setText(resolveInfo.loadLabel(packageManager));
+                return view;
+            }
+        };
+        return arrayAdapter;
     }
 
 }
