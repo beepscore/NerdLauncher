@@ -1,6 +1,7 @@
 package com.beepscore.android.nerdlauncher;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
@@ -43,6 +44,21 @@ public class NerdLauncherFragment extends ListFragment {
 
         ArrayAdapter<ResolveInfo> adapter = getResolveInfoArrayAdapter(activities);
         setListAdapter(adapter);
+    }
+
+    @Override
+    public void onListItemClick(ListView listView, View view, int position, long id) {
+        ResolveInfo resolveInfo = (ResolveInfo)listView.getAdapter().getItem(position);
+        ActivityInfo activityInfo = resolveInfo.activityInfo;
+
+        if (activityInfo == null) {
+            return;
+        }
+
+        // explicit intent
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setClassName(activityInfo.applicationInfo.packageName, activityInfo.name);
+        startActivity(intent);
     }
 
     private void sortActivities(List<ResolveInfo> activities) {
